@@ -1,0 +1,36 @@
+spring:
+  main:
+    web-application-type: servlet
+  application:
+    name: SpringProject
+  datasource:
+    url: jdbc:postgresql://ep-snowy-dawn-a8wdtmjs.eastus2.azure.neon.tech/PODB?user=PODB_owner&password=Z9RsUt1jhyEw&sslmode=require
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  cloudinary:
+    cloud-name: dqeqssfyh
+    api-key: 864474349116394
+    api-secret: OYxiib05JuEpIidPabqugp1xTxE
+
+    springdoc:
+      api-docs:
+        enabled: true
+        path: /v3/api-docs
+      swagger-ui:
+        enabled: true
+        path: /swagger-ui.html
+        tryItOutEnabled: true
+        operationsSorter: method
+      packages-to-scan: data.le controller...
+      pathsToMatch: /recrutement/**
+
+server:
+  
+  port: 3000
