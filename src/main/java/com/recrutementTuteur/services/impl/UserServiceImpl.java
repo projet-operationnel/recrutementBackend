@@ -19,6 +19,8 @@ import com.recrutementTuteur.web.dto.response.LoginResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import com.recrutementTuteur.web.dto.requests.LogoutRequest;
+import com.recrutementTuteur.web.dto.response.LogoutResponse;
 
 
 @Service
@@ -103,5 +105,29 @@ public class UserServiceImpl implements IUserService {
                 .message("Connexion réussie")
                 .statusCode(HttpStatus.OK.value())
                 .build();
+    }
+
+    @Override
+    public LogoutResponse logout(LogoutRequest request) {
+        try {
+            if (request.getToken() == null || request.getToken().isEmpty()) {
+                return LogoutResponse.builder()
+                        .message("Token invalide")
+                        .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .build();
+            }
+
+            jwtService.invalidateToken(request.getToken());
+
+            return LogoutResponse.builder()
+                    .message("Déconnexion réussie")
+                    .statusCode(HttpStatus.OK.value())
+                    .build();
+        } catch (Exception e) {
+            return LogoutResponse.builder()
+                    .message("Erreur lors de la déconnexion")
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
+        }
     }
 }

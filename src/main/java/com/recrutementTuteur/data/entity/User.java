@@ -25,14 +25,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    // Stockage du chemin de la photo (nullable)
-/*    private String photoUrl;
-
-    // Métadonnées de la photo (nullable)
-    private String photoNom;
-    private String photoType;
-
-    @Lob
-    @Column(name = "photo_data", columnDefinition = "BYTEA")
-    private byte[] photoData;*/
 }

@@ -51,10 +51,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.recrutementTuteur.web.dto.requests.LogoutRequest;
+import com.recrutementTuteur.web.dto.response.LogoutResponse;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+
 public class UserController {
     private final IUserService userService;
 
@@ -67,6 +70,12 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = userService.login(request);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutResponse> logout(@RequestBody LogoutRequest request) {
+        LogoutResponse response = userService.logout(request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }
