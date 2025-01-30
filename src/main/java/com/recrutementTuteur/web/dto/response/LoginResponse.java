@@ -1,23 +1,22 @@
 package com.recrutementTuteur.web.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.recrutementTuteur.web.dto.response.ResponseData.LoginData;
+import com.recrutementTuteur.web.dto.response.ResponseData.ResponseData;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class LoginResponse {
-    private Long id;
-    private String nom;
-    private String prenom;
-    private String email;
-    private String token; // Nouveau champ pour le token JWT
-    private String message;
+public class LoginResponse extends ResponseData<LoginData> {
     private int statusCode;
-    private Map<String, String> errors;
+
+    public LoginResponse(String message, LoginData data, boolean status) {
+        super(message, data, status);
+        this.statusCode = status ? 200 : 401; // 200 pour succès, 401 pour échec d'authentification
+    }
+
+    public LoginResponse(String message, LoginData data, boolean status, int statusCode) {
+        super(message, data, status);
+        this.statusCode = statusCode;
+    }
 }

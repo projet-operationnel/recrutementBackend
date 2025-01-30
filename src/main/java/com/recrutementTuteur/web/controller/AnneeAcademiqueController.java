@@ -24,7 +24,7 @@ public class AnneeAcademiqueController {
     }
 
     @PostMapping("/{id}/activer")
-/*    @PreAuthorize("isAuthenticated()")*/
+   @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AnneeResponse> activer(@PathVariable Long id) {
         AnneeResponse response = anneeService.activer(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
@@ -36,14 +36,14 @@ public class AnneeAcademiqueController {
     }
 
     @PutMapping("/{id}")
-/*    @PreAuthorize("isAuthenticated()")*/
+   @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AnneeResponse> modifier(@PathVariable Long id, @RequestBody CreateAnneeRequest request) {
         AnneeResponse response = anneeService.modifier(id, request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @DeleteMapping("/{id}")
-/*    @PreAuthorize("isAuthenticated()")*/
+  @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AnneeResponse> supprimer(@PathVariable Long id) {
         AnneeResponse response = anneeService.supprimer(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);

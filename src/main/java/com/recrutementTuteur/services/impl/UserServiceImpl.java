@@ -7,6 +7,8 @@ import com.recrutementTuteur.services.interfaces.IUserService;
 import com.recrutementTuteur.web.dto.requests.RegisterRequest;
 import com.recrutementTuteur.web.dto.response.RegisterResponse;
 import com.recrutementTuteur.validator.RegisterRequestValidator;
+import com.recrutementTuteur.web.dto.response.ResponseData.LoginData;
+import com.recrutementTuteur.web.dto.response.ResponseData.RegisterData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,13 +41,16 @@ public class UserServiceImpl implements IUserService {
 
         if (errors.hasErrors()) {
             Map<String, String> validationErrors = new HashMap<>();
-            errors.getFieldErrors().forEach(error -> validationErrors.put(error.getField(), error.getDefaultMessage()));
+            errors.getFieldErrors().forEach(error ->
+                    validationErrors.put(error.getField(), error.getDefaultMessage()));
 
-            return RegisterResponse.builder()
-                    .message("Validation errors")
-                    .errors(validationErrors)
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .build();
+            return new RegisterResponse(
+                    "Erreurs de validation",
+                    null,
+                    false,
+                    HttpStatus.BAD_REQUEST.value(),
+                    validationErrors
+            );
         }
 
         User user = new User();
@@ -58,53 +63,66 @@ public class UserServiceImpl implements IUserService {
 
         User savedUser = userRepository.save(user);
 
-        return RegisterResponse.builder()
+        RegisterData registerData = RegisterData.builder()
                 .id(savedUser.getId())
                 .nom(savedUser.getNom())
                 .prenom(savedUser.getPrenom())
                 .email(savedUser.getEmail())
-                .message("User registered successfully")
-                .statusCode(HttpStatus.CREATED.value())
                 .build();
+
+        return new RegisterResponse(
+                "Inscription réussie",
+                registerData,
+                true,
+                HttpStatus.CREATED.value()
+        );
     }
-
-
     @Override
     public LoginResponse login(LoginRequest request) {
         // Rechercher l'utilisateur par email
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
-        // Vérifier si l'utilisateur existe et si le mot de passe est correct
+        // Vérifier si l'utilisateur existe
         if (userOptional.isEmpty()) {
-            return LoginResponse.builder()
-                    .message("Aucun compte associé à cet email")
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .build();
+            return new LoginResponse(
+                    "Aucun compte associé à cet email",
+                    null,
+                    false,
+                    HttpStatus.UNAUTHORIZED.value()
+            );
         }
 
         User user = userOptional.get();
 
         // Vérifier le mot de passe
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return LoginResponse.builder()
-                    .message("Mot de passe incorrect")
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .build();
+            return new LoginResponse(
+                    "Mot de passe incorrect",
+                    null,
+                    false,
+                    HttpStatus.UNAUTHORIZED.value()
+            );
         }
 
         // Générer le token JWT
         String token = jwtService.generateToken(user);
 
-        // Connexion réussie avec token
-        return LoginResponse.builder()
+        // Créer l'objet LoginData
+        LoginData loginData = LoginData.builder()
                 .id(user.getId())
                 .nom(user.getNom())
                 .prenom(user.getPrenom())
                 .email(user.getEmail())
-                .token(token) // Ajout du token
-                .message("Connexion réussie")
-                .statusCode(HttpStatus.OK.value())
+                .token(token)
                 .build();
+
+        // Retourner la réponse avec succès
+        return new LoginResponse(
+                "Connexion réussie",
+                loginData,
+                true,
+                HttpStatus.OK.value()
+        );
     }
 
     @Override

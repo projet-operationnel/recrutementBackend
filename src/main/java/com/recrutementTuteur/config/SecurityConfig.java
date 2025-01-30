@@ -71,6 +71,8 @@ public class SecurityConfig {
         return authProvider;
     }
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -82,7 +84,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-                        .requestMatchers("/api/v1/annee/**").authenticated()
+                        .requestMatchers(
+                                "/api/v1/annee/**",     // Utilisation de ** pour inclure tous les sous-chemins
+                                "/api/v1/annonces/**"    // Utilisation de ** pour inclure tous les sous-chemins
+                        ).hasAnyRole("CANDIDAT", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
